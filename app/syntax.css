@@ -1,0 +1,72 @@
+/* 마크다운 코드 블록 전체 박스 디자인 */
+pre {
+  @apply bg-gray-900 text-gray-100 p-5 rounded-xl overflow-x-auto text-sm my-6 shadow-md;
+}
+
+/* 코드 블록 내부 글꼴 */
+code {
+  @apply font-mono text-sm leading-relaxed;
+}
+
+/* 본문 중간에 들어가는 `인라인 코드` 디자인 (분홍색 배경 포인트) */
+:not(pre) > code {
+  @apply bg-pink-50 text-pink-600 px-1.5 py-0.5 rounded-md text-sm font-semibold border border-pink-100;
+}
+
+/* * 아래는 구문 강조(Syntax Highlighting) 색상 규칙입니다. 
+ * (Prism.js 또는 highlight.js 계열 라이브러리 호환)
+ */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  @apply text-gray-500 italic; /* 주석: 회색 및 기울임 */
+}
+
+.token.punctuation {
+  @apply text-gray-400; /* 괄호, 쉼표 등: 연한 회색 */
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  @apply text-pink-400; /* 태그, 숫자, 불리언: 분홍색 */
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  @apply text-green-400; /* 문자열(String), 속성명: 연두색 */
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  @apply text-yellow-400; /* 연산자(+,-,=): 노란색 */
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  @apply text-blue-400; /* 키워드(const, function, let): 파란색 */
+}
+
+.token.function,
+.token.class-name {
+  @apply text-yellow-300; /* 함수명, 클래스명: 밝은 노란색 */
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  @apply text-orange-400; /* 변수, 정규식: 주황색 */
+}

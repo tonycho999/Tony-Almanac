@@ -1,0 +1,80 @@
+/* Tailwind CSS의 기본 지시어 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 블로그 전체 기본 스타일 */
+@layer base {
+  body {
+    /* 텍스트 가독성을 높이는 안티앨리어싱 & 드래그 시 예쁜 색상 적용 */
+    @apply bg-slate-50 text-slate-800 antialiased selection:bg-indigo-200 selection:text-indigo-900; 
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* 🎨 마크다운(prose) 화려한 커스텀 스타일 */
+@layer utilities {
+  
+  /* 1. 이미지: 둥근 모서리, 입체감, 마우스 올릴 때 붕 뜨는 애니메이션 */
+  .prose img {
+    @apply block mx-auto max-w-full h-auto rounded-2xl shadow-lg border border-slate-200 transition-all duration-500 hover:-translate-y-1 hover:shadow-2xl;
+    max-height: 600px;
+    object-fit: contain;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+  }
+
+  /* 2. H2 제목: 단순 단색이 아닌 '푸른빛~보랏빛 그라데이션' 텍스트 */
+  .prose h2 {
+    @apply font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600;
+    border-bottom: 2px solid #e2e8f0 !important;
+    padding-bottom: 0.75rem !important;
+    margin-top: 4rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* 3. H3 소제목: 포인트 인디고 컬러 */
+  .prose h3 {
+    @apply font-bold text-indigo-700 !important;
+    margin-top: 2.5rem !important;
+  }
+
+  /* 4. 링크: 마우스 올리면 스르륵 나타나는 그라데이션 밑줄 효과 */
+  .prose a {
+    @apply text-indigo-600 font-bold no-underline relative transition-colors duration-300;
+  }
+  .prose a:hover {
+    @apply text-purple-600;
+  }
+  .prose a::after {
+    content: '';
+    @apply absolute left-0 -bottom-1 w-full h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 scale-x-0 transition-transform duration-300 origin-left;
+  }
+  .prose a:hover::after {
+    @apply scale-x-100;
+  }
+
+  /* 5. 인용구(Blockquote): 고급스러운 배경색과 테두리 포인트 */
+  .prose blockquote {
+    @apply border-l-4 border-indigo-500 bg-indigo-50 py-3 pr-4 pl-6 my-8 rounded-r-xl italic text-slate-700 shadow-sm;
+  }
+
+  /* 6. 표(Table) 화려하게: 헤더에 색상 추가 및 줄무늬 효과 */
+  .prose table {
+    @apply w-full text-left border-collapse rounded-lg overflow-hidden shadow-sm my-8;
+  }
+  .prose thead {
+    @apply bg-gradient-to-r from-slate-800 to-slate-700 text-white;
+  }
+  .prose th {
+    @apply px-4 py-3 font-semibold;
+  }
+  .prose td {
+    @apply px-4 py-3 border-b border-slate-200 bg-white;
+  }
+  .prose tr:hover td {
+    @apply bg-slate-50 transition-colors duration-200;
+  }
+}
