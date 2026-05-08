@@ -42,7 +42,7 @@ export default function HomePage() {
       
       {/* 🚀 수정된 부분: 그라데이션 타이틀과 인디고 서브타이틀 */}
       <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-2">
-        최신 리뷰 및 추천 가이드
+        My whisky story
       </h1>
       
       <div className="space-y-6">
