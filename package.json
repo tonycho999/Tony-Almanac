@@ -1,7 +1,8 @@
 {
-  "name": "my-ad-blog",
+  "name": "whisky-and-me",
   "version": "1.0.0",
   "private": true,
+  "description": "A whisky journal: A hobby that became my daily ritual",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
