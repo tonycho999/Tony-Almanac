@@ -35,7 +35,7 @@ export default function HomePage() {
       };
     })
     // 최신 날짜순으로 정렬
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return (
     <div className="container mx-auto px-4 max-w-3xl min-h-[60vh] pt-10">
