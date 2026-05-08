@@ -13,7 +13,7 @@ export async function GET() {
     console.log("No _posts directory found");
   }
 
-  // 2. 실제 마크다운 파일에서 제목, 설명, 날짜, 슬러그(주소) 자동 추출
+  // 2. 실제 마크다운 파일에서 데이터 추출
   const posts = fileNames
     .filter(fileName => fileName.endsWith('.md') || fileName.endsWith('.mdx'))
     .map(fileName => {
@@ -33,23 +33,26 @@ export async function GET() {
         date: dateMatch ? new Date(dateMatch[1]).toUTCString() : new Date().toUTCString(),
       };
     })
-    // 3. 최신 날짜순 정렬
+    // 3. 최신 날짜 및 시간순 정렬 (최신글이 상단)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-  // 🚀 새 블로그 주소로 변경하세요 (예: https://whisky-and-me.vercel.app)
-  const blogUrl = 'https://새로운위스키블로그주소를여기에입력하세요.vercel.app';
+  // 🚀 설정된 블로그 주소
+  const blogUrl = 'https://whisky-and-me.vercel.app';
 
-  // 4. 추출한 데이터를 바탕으로 RSS XML 구조 생성
+  // 4. RSS XML 구조 생성 (영문 슬로건 적용)
   const rssFeed = `<?xml version="1.0" encoding="UTF-8" ?>
-    <rss version="2.0">
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
       <channel>
         <title>WHISKY and ME</title>
         <link>${blogUrl}</link>
-        <description>나의 일상이자 취미가 되어버린 위스키 기록</description>
+        <description>A whisky journal: A hobby that became my daily ritual</description>
+        <language>en-us</language>
+        <atom:link href="${blogUrl}/rss.xml" rel="self" type="application/rss+xml" />
         ${posts.map(post => `
           <item>
             <title><![CDATA[${post.title}]]></title>
             <link>${blogUrl}/posts/${post.slug}</link>
+            <guid isPermaLink="true">${blogUrl}/posts/${post.slug}</guid>
             <description><![CDATA[${post.description}]]></description>
             <pubDate>${post.date}</pubDate>
           </item>
@@ -59,7 +62,8 @@ export async function GET() {
 
   return new NextResponse(rssFeed, {
     headers: {
-      'Content-Type': 'application/xml',
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, s-maxage=1200, stale-while-revalidate=600',
     },
   });
 }
