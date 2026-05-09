@@ -6,6 +6,17 @@ import { notFound } from 'next/navigation';
 
 const components = { AffiliateAdCard };
 
+// 홈페이지와 동일한 카테고리 뱃지 디자인 매핑
+const categoryMap: Record<string, { name: string; color: string }> = {
+  programming: { name: '💻 Programming', color: 'bg-blue-100 text-blue-800' },
+  whisky: { name: '🥃 Whisky', color: 'bg-amber-100 text-amber-800' },
+  golf: { name: '⛳ Golf', color: 'bg-green-100 text-green-800' },
+  lions: { name: '🦁 Lions', color: 'bg-blue-100 text-blue-800' },
+  travel: { name: '✈️ Travel', color: 'bg-teal-100 text-teal-800' },
+  insights: { name: '💡 Insights', color: 'bg-purple-100 text-purple-800' },
+  uncategorized: { name: 'Archive', color: 'bg-gray-100 text-gray-800' }
+};
+
 // 🚀 [SEO/GEO] 검색 엔진 및 AI 답변 엔진을 위한 동적 메타데이터 생성
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const { slug } = params;
@@ -16,32 +27,28 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     fullPath = path.join(postsDirectory, `${slug}.md`);
   }
 
-  // 파일이 없으면 기본 에러 메타 반환
   if (!fs.existsSync(fullPath)) {
     return { title: 'Post Not Found' };
   }
 
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   
-  // 마크다운 상단(Frontmatter)에서 데이터 추출 (정규식 개선으로 따옴표 종류 무관하게 추출)
   const titleMatch = fileContents.match(/title:\s*['"]([^'"]+)['"]/);
   const descMatch = fileContents.match(/description:\s*['"]([^'"]+)['"]/);
   const dateMatch = fileContents.match(/date:\s*['"]([^'"]+)['"]/);
   
   const title = titleMatch ? titleMatch[1] : slug;
-  // 기본 설명을 Tony's Almanac에 맞게 변경
   const description = descMatch ? descMatch[1] : "A curated post from Tony's Almanac. Exploring code, whisky, golf, and life.";
-  const publishedDate = dateMatch ? dateMatch[1] : new Date().toISOString();
+  const publishedDate = dateMatch ? new Date(dateMatch[1]).toISOString() : new Date().toISOString();
 
   return {
     title: title, 
-    // 👉 app/layout.tsx의 template 설정 덕분에 "글 제목 | Tony's Almanac"으로 자동 완성됩니다.
     description: description,
     openGraph: {
       title: title,
       description: description,
-      type: 'article', // [SEO] 글 페이지이므로 article 속성 부여
-      publishedTime: publishedDate, // [SEO] 최신 글임을 어필
+      type: 'article', 
+      publishedTime: publishedDate, 
       authors: ['Tony Cho'],
       siteName: "Tony's Almanac",
     },
@@ -66,22 +73,27 @@ export default function PostPage({ params }: { params: { slug: string } }) {
 
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   
-  // Frontmatter 추출 (본문 상단에 제목과 날짜를 예쁘게 표시하기 위함)
+  // Frontmatter 추출
   const titleMatch = fileContents.match(/title:\s*['"]([^'"]+)['"]/);
   const dateMatch = fileContents.match(/date:\s*['"]([^'"]+)['"]/);
+  const categoryMatch = fileContents.match(/category:\s*['"]?([^'"\n]+)['"]?/i);
+
   const title = titleMatch ? titleMatch[1] : slug;
   const date = dateMatch ? dateMatch[1] : '';
+  const category = categoryMatch ? categoryMatch[1].trim().toLowerCase() : 'uncategorized';
+  
+  // 카테고리 뱃지 정보 가져오기
+  const catInfo = categoryMap[category] || categoryMap.uncategorized;
 
-  // Frontmatter 제외하고 본문만 추출하는 로직 방어코드 추가
   const contentParts = fileContents.split('---');
   const content = contentParts.length >= 3 ? contentParts.slice(2).join('---').trim() : fileContents;
 
-  // 🤖 [AEO/GEO] 구조화된 데이터(JSON-LD) 생성: 구글 검색 시 '리치 스니펫'으로 돋보이게 함
+  // JSON-LD 구조화된 데이터
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: title,
-    datePublished: date,
+    datePublished: date ? new Date(date).toISOString() : undefined,
     author: {
       '@type': 'Person',
       name: 'Tony Cho',
@@ -89,28 +101,41 @@ export default function PostPage({ params }: { params: { slug: string } }) {
   };
 
   return (
-    // <article> 태그를 사용하여 독립적인 콘텐츠임을 검색엔진에 알림
     <article className="w-full max-w-3xl animate-fadeIn">
-      
-      {/* JSON-LD 스크립트 삽입 (눈에 보이지 않지만 검색 로봇이 읽어감) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       
-      {/* 포스트 헤더: 제목과 날짜 */}
+      {/* 🚀 포스트 헤더: 카테고리 뱃지, 제목, 날짜 및 시간 */}
       <header className="mb-10 pb-6 border-b border-gray-200">
+        
+        {/* 카테고리 뱃지 추가 */}
+        <div className="mb-5">
+          <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full ${catInfo.color}`}>
+            {catInfo.name}
+          </span>
+        </div>
+
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight leading-tight">
           {title}
         </h1>
+        
+        {/* 시간 표시 포맷 변경 (Hour, Minute 포함) */}
         {date && (
-          <time className="text-sm text-gray-500 font-medium">
-            {new Date(date).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric'
-            })}
-          </time>
+          <div className="flex items-center text-sm text-gray-500 font-medium">
+            <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <time>
+              {new Date(date).toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+              })}
+            </time>
+          </div>
         )}
       </header>
 
