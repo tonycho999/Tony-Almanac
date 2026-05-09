@@ -13,7 +13,6 @@ const categoryTitles: Record<string, string> = {
   insights: '💡 Daily Insights',
 };
 
-// 🚀 [SEO] 각 카테고리 페이지별 동적 메타데이터 생성
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const { slug } = params;
   const displayTitle = categoryTitles[slug] || 'Archive';
@@ -24,7 +23,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-// _posts 폴더에서 특정 카테고리의 글만 필터링하는 함수
 function getPostsByCategory(categorySlug: string) {
   const postsDirectory = path.join(process.cwd(), '_posts');
   
@@ -38,12 +36,9 @@ function getPostsByCategory(categorySlug: string) {
       const fullPath = path.join(postsDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       
-      // 정규식으로 Frontmatter 데이터 추출
       const titleMatch = fileContents.match(/title:\s*['"]([^'"]+)['"]/);
       const descMatch = fileContents.match(/description:\s*['"]([^'"]+)['"]/);
       const dateMatch = fileContents.match(/date:\s*['"]([^'"]+)['"]/);
-      
-      // ✨ 핵심: category 속성 추출 (작은따옴표, 큰따옴표, 따옴표 없음 모두 대응)
       const categoryMatch = fileContents.match(/category:\s*['"]?([^'"\n]+)['"]?/i);
 
       return {
@@ -54,10 +49,9 @@ function getPostsByCategory(categorySlug: string) {
         category: categoryMatch ? categoryMatch[1].trim().toLowerCase() : 'uncategorized',
       };
     })
-    // URL로 전달된 카테고리(slug)와 파일에 적힌 카테고리가 일치하는 것만 필터링
     .filter((post) => post.category === categorySlug.toLowerCase())
-    // 최신 글이 맨 위로 오도록 날짜순 정렬
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
+    // 🚀 최신 글이 위로, 오래된 글이 아래로 가도록 정렬 (내림차순)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
   return posts;
 }
@@ -65,7 +59,6 @@ function getPostsByCategory(categorySlug: string) {
 export default function CategoryPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
   
-  // 정의되지 않은 이상한 카테고리 주소로 들어오면 404 처리
   if (!Object.keys(categoryTitles).includes(slug)) {
     notFound();
   }
@@ -85,32 +78,40 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
         </p>
       </header>
 
-      {/* 글 목록 표시 영역 */}
+      {/* 글 목록 표시 영역: 1단(한 줄) 레이아웃으로 변경 (space-y-6 사용) */}
       {posts.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
           <p className="text-gray-500 font-medium">아직 작성된 글이 없습니다.</p>
           <p className="text-sm text-gray-400 mt-2">새로운 기록이 곧 업데이트될 예정입니다.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex flex-col space-y-6">
           {posts.map((post) => (
-            <Link href={`/posts/${post.slug}`} key={post.slug} className="group flex flex-col h-full bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
+            <Link href={`/posts/${post.slug}`} key={post.slug} className="group block bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-gray-300 transition-all">
+              
+              {/* 🚀 날짜와 시간을 함께 표시 */}
               {post.date && (
-                <time className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                  {new Date(post.date).toLocaleDateString('en-US', {
+                <time className="text-sm font-semibold text-gray-500 tracking-wider mb-3 block">
+                  {new Date(post.date).toLocaleString('en-US', {
                     year: 'numeric',
-                    month: 'short',
-                    day: 'numeric'
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
                   })}
                 </time>
               )}
-              <h2 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+              
+              <h2 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
                 {post.title}
               </h2>
-              <p className="text-sm text-gray-600 line-clamp-3 mb-4 flex-1">
+              
+              <p className="text-base text-gray-600 mb-5 line-clamp-3">
                 {post.description}
               </p>
-              <div className="mt-auto text-sm font-semibold text-blue-600 group-hover:translate-x-1 transition-transform">
+              
+              <div className="inline-flex items-center text-sm font-semibold text-blue-600 group-hover:translate-x-1 transition-transform">
                 Read more →
               </div>
             </Link>
@@ -121,7 +122,6 @@ export default function CategoryPage({ params }: { params: { slug: string } }) {
   );
 }
 
-// Vercel 배포 시 정적 페이지(Static Site Generation)로 사전 렌더링
 export async function generateStaticParams() {
   return Object.keys(categoryTitles).map((slug) => ({
     slug,
