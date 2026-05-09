@@ -3,8 +3,8 @@ import fs from 'fs';
 import path from 'path';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  // 🚀 회원님의 진짜 블로그 주소
-  const blogUrl = 'https://whisky-and-me.vercel.app';
+  // 🚀 새로운 블로그 주소 적용
+  const blogUrl = 'https://tony-almanac.vercel.app';
   const postsDirectory = path.join(process.cwd(), '_posts');
   
   let fileNames: string[] = [];
@@ -14,7 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     console.log("No _posts directory found");
   }
 
-  // 1. _posts 폴더의 마크다운 파일을 읽어서 사이트맵 주소로 자동 변환
+  // 1. 개별 포스팅 주소 자동 생성
   const posts = fileNames
     .filter(fileName => fileName.endsWith('.md') || fileName.endsWith('.mdx'))
     .map(fileName => {
@@ -22,24 +22,44 @@ export default function sitemap(): MetadataRoute.Sitemap {
       const fullPath = path.join(postsDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       
-      const dateMatch = fileContents.match(/date:\s*'([^']+)'/) || fileContents.match(/date:\s*"([^"]+)"/);
+      // 날짜 추출 (정규식 강화)
+      const dateMatch = fileContents.match(/date:\s*['"]([^'"]+)['"]/);
       
       return {
         url: `${blogUrl}/posts/${slug}`,
         lastModified: dateMatch ? new Date(dateMatch[1]) : new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.8,
       };
     });
 
-  // 2. 블로그의 기본 고정 페이지들 (메인, 이용약관, 개인정보처리방침)
+  // 2. 카테고리 페이지 주소 생성 (SEO 핵심)
+  const categories = [
+    'programming',
+    'whisky',
+    'golf',
+    'lions',
+    'travel',
+    'insights'
+  ].map((slug) => ({
+    url: `${blogUrl}/category/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }));
+
+  // 3. 기본 고정 페이지 (메인, 이용약관, 개인정보처리방침)
   const routes = [
     '',
-    '/terms-of-service',
-    '/privacy-policy',
+    '/terms',
+    '/privacy',
   ].map((route) => ({
     url: `${blogUrl}${route}`,
     lastModified: new Date(),
+    changeFrequency: 'monthly' as const,
+    priority: route === '' ? 1.0 : 0.5, // 메인 페이지는 가장 높은 우선순위
   }));
 
-  // 3. 고정 페이지 + 자동 생성된 포스팅 주소를 합쳐서 반환
-  return [...routes, ...posts];
+  // 고정 페이지 + 카테고리 + 포스팅 주소를 모두 합쳐서 반환
+  return [...routes, ...categories, ...posts];
 }
