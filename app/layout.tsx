@@ -79,7 +79,7 @@ export default function RootLayout({
         <Header />
 
         {/* 중단 레이아웃: 사이드바와 메인 콘텐츠를 가로로 배치 */}
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex flex-1 overflow-hidden max-w-7xl mx-auto w-full">
           
           {/* ⬅️ 좌측 사이드바: 고정형 (스크롤 없음) */}
           <aside className="w-72 flex-shrink-0 border-r border-gray-200 bg-gray-50 p-6 flex flex-col hidden md:flex">
