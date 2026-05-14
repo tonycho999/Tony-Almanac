@@ -61,34 +61,25 @@
     @apply border-l-4 border-indigo-500 bg-indigo-50 py-3 pr-4 pl-6 my-8 rounded-r-xl italic text-slate-700 shadow-sm;
   }
 
-  /* 6. 표(Table) 화려하게: 헤더에 색상 추가 및 줄무늬 효과 */
-/* 6. 표(Table) 화려하게: 삼성 라이온즈 블루를 반영한 전역 스타일 */
+/* 6. 표(Table) 화려하게: 헤더 중앙 정렬 및 디자인 최적화 */
   .prose table {
-    @apply w-full text-left border-collapse rounded-xl overflow-hidden shadow-md my-10;
+    /* 기존 text-left를 제거하거나 무시하고 싶다면 명시하지 않아도 됩니다 */
+    @apply w-full border-collapse rounded-xl overflow-hidden shadow-md my-10;
     border: 1px solid #e2e8f0;
   }
   
   .prose thead {
-    /* 기존 slate-800 대신 삼성의 Royal Blue(#0054a6)와 어울리는 그라데이션으로 변경 */
     background: linear-gradient(90deg, #0054a6 0%, #003d7a 100%) !important;
   }
   
   .prose th {
-    /* 텍스트를 흰색으로 강제하고 폰트 두께를 높임 */
-    @apply px-4 py-4 font-bold text-white !important;
+    /* text-center를 추가하여 모든 표 제목을 중앙으로 설정 */
+    @apply px-4 py-4 font-bold text-white text-center !important;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
   
   .prose td {
     @apply px-4 py-4 border-b border-slate-100 bg-white text-slate-700;
-  }
-  
-  .prose tr:last-child td {
-    @apply border-b-0;
-  }
-
-  .prose tr:hover td {
-    @apply bg-blue-50/50 transition-colors duration-200;
   }
 }
