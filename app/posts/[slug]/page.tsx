@@ -2,9 +2,17 @@ import fs from 'fs';
 import path from 'path';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 import AffiliateAdCard from '@/components/AffiliateAdCard';
+// 1. AffiliateLink 컴포넌트를 임포트합니다.
+import AffiliateLink from '@/components/AffiliateLink'; 
 import { notFound } from 'next/navigation';
 
-const components = { AffiliateAdCard };
+// 2. MDX가 인식할 수 있도록 components 객체에 추가합니다.
+const components = { 
+  AffiliateAdCard, 
+  AffiliateLink 
+};
+
+// ... 이하 기존 코드와 동일 (수정 불필요) ...
 
 // 홈페이지와 동일한 카테고리 뱃지 디자인 매핑
 const categoryMap: Record<string, { name: string; color: string }> = {
@@ -17,7 +25,7 @@ const categoryMap: Record<string, { name: string; color: string }> = {
   uncategorized: { name: 'Archive', color: 'bg-gray-100 text-gray-800' }
 };
 
-// 🚀 [SEO/GEO] 검색 엔진 및 AI 답변 엔진을 위한 동적 메타데이터 생성
+// [SEO/GEO] 메타데이터 생성 로직
 export async function generateMetadata({ params }: { params: { slug: string } }) {
   const { slug } = params;
   const postsDirectory = path.join(process.cwd(), '_posts');
@@ -38,7 +46,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const dateMatch = fileContents.match(/date:\s*['"]([^'"]+)['"]/);
   
   const title = titleMatch ? titleMatch[1] : slug;
-  const description = descMatch ? descMatch[1] : "A curated post from Tony's Almanac. Exploring code, whisky, golf, and life.";
+  const description = descMatch ? descMatch[1] : "A curated post from Tony's Almanac.";
   const publishedDate = dateMatch ? new Date(dateMatch[1]).toISOString() : new Date().toISOString();
 
   return {
@@ -73,7 +81,6 @@ export default function PostPage({ params }: { params: { slug: string } }) {
 
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   
-  // Frontmatter 추출
   const titleMatch = fileContents.match(/title:\s*['"]([^'"]+)['"]/);
   const dateMatch = fileContents.match(/date:\s*['"]([^'"]+)['"]/);
   const categoryMatch = fileContents.match(/category:\s*['"]?([^'"\n]+)['"]?/i);
@@ -82,13 +89,11 @@ export default function PostPage({ params }: { params: { slug: string } }) {
   const date = dateMatch ? dateMatch[1] : '';
   const category = categoryMatch ? categoryMatch[1].trim().toLowerCase() : 'uncategorized';
   
-  // 카테고리 뱃지 정보 가져오기
   const catInfo = categoryMap[category] || categoryMap.uncategorized;
 
   const contentParts = fileContents.split('---');
   const content = contentParts.length >= 3 ? contentParts.slice(2).join('---').trim() : fileContents;
 
-  // JSON-LD 구조화된 데이터
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -107,10 +112,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       
-      {/* 🚀 포스트 헤더: 카테고리 뱃지, 제목, 날짜 및 시간 */}
       <header className="mb-10 pb-6 border-b border-gray-200">
-        
-        {/* 카테고리 뱃지 추가 */}
         <div className="mb-5">
           <span className={`text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full ${catInfo.color}`}>
             {catInfo.name}
@@ -121,10 +123,11 @@ export default function PostPage({ params }: { params: { slug: string } }) {
           {title}
         </h1>
         
-        {/* 시간 표시 포맷 변경 (Hour, Minute 포함) */}
         {date && (
           <div className="flex items-center text-sm text-gray-500 font-medium">
-            <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <svg className="w-4 h-4 mr-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
             <time>
               {new Date(date).toLocaleString('en-US', {
                 year: 'numeric',
@@ -139,7 +142,6 @@ export default function PostPage({ params }: { params: { slug: string } }) {
         )}
       </header>
 
-      {/* 포스트 본문 영역 */}
       <div className="prose prose-lg prose-gray max-w-none hover:prose-a:text-blue-600 prose-img:rounded-xl prose-img:shadow-md">
         <MDXRemote source={content} components={components} />
       </div>
@@ -149,7 +151,6 @@ export default function PostPage({ params }: { params: { slug: string } }) {
 
 export async function generateStaticParams() {
   const postsDirectory = path.join(process.cwd(), '_posts');
-  
   try {
     const fileNames = fs.readdirSync(postsDirectory);
     return fileNames
