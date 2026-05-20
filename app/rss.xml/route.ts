@@ -4,7 +4,7 @@ import matter from 'gray-matter'; // .mdx 파일의 제목, 날짜 등을 읽어
 
 // 이 파일은 /rss.xml 경로를 최종적으로 생성합니다.
 export async function GET() {
-  const siteUrl = 'https://tony-almanac.vercel.app';
+  const siteUrl = 'https://tony-almanac.pages.dev/';
   
   // 1. '_posts' 폴더에서 모든 마크다운 파일(.mdx)을 읽어옵니다.
   const postsDirectory = path.join(process.cwd(), '_posts');
