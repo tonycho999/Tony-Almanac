@@ -3,7 +3,7 @@ import path from 'path';
 
 // 이 파일은 /sitemap.xml 경로를 최종적으로 생성합니다.
 export async function GET() {
-  const siteUrl = 'https://tony-almanac.vercel.app';
+  const siteUrl = 'https://tony-almanac.pages.dev/';
 
   // 1. 'posts' 폴더에서 모든 마크다운 파일(.mdx)의 이름을 읽어옵니다.
   //    (만약 폴더 이름이나 확장자가 다르다면 이 부분을 수정해야 합니다.)
