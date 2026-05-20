@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>Tony's Almanac</title>
+  <link>https://tony-almanac.vercel.app</link>
+  <description>A whisky journal: A hobby that became my daily ritual. It is also a collection of stories about Tony's minor experiences.</description>
+  <language>ko-kr</language>
+  <lastBuildDate>Wed, 20 May 2026 15:30:00 +0900</lastBuildDate>
+  <item>
+    <title>Welcome to Tony's Almanac</title>
+    <link>https://tony-almanac.vercel.app/posts</link>
+    <description>Tony의 사소한 경험과 위스키 이야기를 만나보세요.</description>
+    <pubDate>Wed, 20 May 2026 15:30:00 +0900</pubDate>
+  </item>
+</channel>
+</rss>
