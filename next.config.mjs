@@ -1,12 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'export', // ✨ Cloudflare Pages 정적 배포를 위한 핵심 설정
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**', // 모든 외부 도메인의 이미지를 허용합니다. (가장 편한 방법)
-      },
-    ],
+    unoptimized: true, // 정적 배포 시 이미지 최적화 끄기 (필수)
   },
 };
 
