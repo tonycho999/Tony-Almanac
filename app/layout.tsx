@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   // [SEO] 기본 URL 설정 (최신 배포 도메인 적용)
-  metadataBase: new URL('https://tony-almanac.vercel.app'),
+  metadataBase: new URL('https://tony-almanac.pages.dev/'),
   
   // [SEO/GEO] 검색 결과 및 브라우저 탭에 표시될 제목 최적화
   title: {
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Tony's Almanac",
     description: "Curated insights on Code, Whisky, Golf, and Life by Tony.",
-    url: 'https://tony-almanac.vercel.app',
+    url: 'https://tony-almanac.pages.dev/',
     siteName: "Tony's Almanac",
     locale: 'en_US',
     type: 'website',
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
 
   // 구글 서치 콘솔 인증 정보 유지
   verification: {
-    google: 'DH63NsFaoB_Vb_mnoq8fNircDFilQwQ5a_nnCYSEiL4',
+    google: 'jpV9ytZrmyOE3ncVmwd9y67IjH7vbZ_W5f1p-c7R940',
   },
 };
 
