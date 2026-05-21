@@ -13,8 +13,9 @@ export default function Header() {
           <span className="text-xl">📓</span> 
           Tony's Almanac
         </Link>
-
         
+        {/* Added the missing '<a ' tag below and fixed target="_blank" */}
+        <a 
           href="https://tony-almanac.blogspot.com/"
           target="_blank"
           rel="noopener noreferrer"
