@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
 
   // [SEO] 검색 엔진이 신뢰할 수 있는 키워드 최적화
-  keywords: ['Programming', 'Software Development', 'Single Malt Whisky', 'Golf', 'Samsung Lions', 'Travel Diary', '삼성라이온즈', '위스키', '세계여행', '싱글몰트', 'whiskey', whisky', '해외여행'],
+  keywords: ['Programming', 'Software Development', 'Single Malt Whisky', 'Golf', 'Samsung Lions', 'Travel Diary', '삼성라이온즈', '위스키', '세계여행', '싱글몰트', 'whiskey', 'whisky', '해외여행'],
   
   authors: [{ name: 'Tony Cho' }],
   creator: 'Tony Cho',
