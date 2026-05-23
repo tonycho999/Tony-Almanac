@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   // [SEO/GEO] 검색 결과 및 브라우저 탭에 표시될 제목 최적화
   title: {
     template: "%s | Tony's Almanac",
-    default: "Tony's Almanac | Code, Whisky, Golf & Life",
+    default: "Tony's Almanac | Code, Whisky, Golf, travel & Life",
   },
   
   // [AEO/GEO] AI 답변 엔진이 정체성을 명확히 파악하도록 설명 보강
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
 
   // [SEO] 검색 엔진이 신뢰할 수 있는 키워드 최적화
-  keywords: ['Programming', 'Software Development', 'Single Malt Whisky', 'Golf Tips', 'Samsung Lions', 'Travel Diary', 'Tony Cho'],
+  keywords: ['Programming', 'Software Development', 'Single Malt Whisky', 'Golf', 'Samsung Lions', 'Travel Diary', '삼성라이온즈', '위스키', '세계여행', '싱글몰트', 'whiskey', whisky', '해외여행'],
   
   authors: [{ name: 'Tony Cho' }],
   creator: 'Tony Cho',
