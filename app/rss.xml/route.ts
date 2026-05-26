@@ -2,13 +2,23 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter'; // .mdx 파일의 제목, 날짜 등을 읽어오는 라이브러리
 
-// 이 파일은 /rss.xml 경로를 최종적으로 생성합니다.
+// 💡 Cloudflare Pages 환경에서 빌드 시점에 이 파일을 정적(Static) 파일로 미리 구워내도록 강제합니다.
+// 이 설정이 있어야 fs 모듈로 인한 런타임 에러를 막을 수 있습니다.
+export const dynamic = 'force-static';
+
 export async function GET() {
-  const siteUrl = 'https://tony-almanac.pages.dev/';
+  // 끝의 슬래시를 제거하여 주소 중복을 방지합니다.
+  const siteUrl = 'https://tony-almanac.pages.dev';
   
   // 1. '_posts' 폴더에서 모든 마크다운 파일(.mdx)을 읽어옵니다.
   const postsDirectory = path.join(process.cwd(), '_posts');
-  const postFilenames = fs.readdirSync(postsDirectory);
+  let postFilenames: string[] = [];
+  
+  try {
+    postFilenames = fs.readdirSync(postsDirectory);
+  } catch (error) {
+    console.error("RSS 피드 생성 중 게시물 폴더 읽기 실패:", error);
+  }
 
   // 2. 각 파일의 내용을 읽어와서 RSS <item> 형식으로 만듭니다.
   const postItems = postFilenames.map((name) => {
@@ -17,12 +27,15 @@ export async function GET() {
     const { data, content } = matter(fileContents); // gray-matter로 파일 정보 추출
     const slug = name.replace(/\.mdx$/, '');
 
+    // XML 문법 오류를 방지하기 위해 본문 내 특수문자를 최소한으로 치환하거나 다듬어주는 것이 좋습니다.
+    const descriptionText = data.description || content.substring(0, 150).replace(/[<>&'"]/g, '');
+
     return `
       <item>
         <title>${data.title || slug}</title>
         <link>${siteUrl}/posts/${slug}</link>
-        <description>${data.description || content.substring(0, 150)}</description>
-        <pubDate>${new Date(data.date).toUTCString()}</pubDate>
+        <description>${descriptionText}</description>
+        <pubDate>${data.date ? new Date(data.date).toUTCString() : new Date().toUTCString()}</pubDate>
         <guid>${siteUrl}/posts/${slug}</guid>
       </item>
     `;
