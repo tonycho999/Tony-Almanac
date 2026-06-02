@@ -1,25 +1,26 @@
 import { MetadataRoute } from 'next';
-import { glob } from 'glob';
+import fs from 'fs';
 import path from 'path';
 
 export const dynamic = 'force-static';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const siteUrl = 'https://tony-almanac.pages.dev';
+  const postsDirectory = path.join(process.cwd(), '_posts');
 
-  const files = await glob('_posts/**/*.mdx', {
-    cwd: process.cwd(),
-  });
+  let postFilenames: string[] = [];
+  try {
+    postFilenames = fs.readdirSync(postsDirectory).filter((f) => f.endsWith('.mdx'));
+  } catch (error) {
+    console.error('sitemap: _posts 읽기 실패:', error);
+  }
 
-  const postUrls: MetadataRoute.Sitemap = files.map((file) => {
-    const slug = path.basename(file, '.mdx');
-    return {
-      url: `${siteUrl}/posts/${slug}`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.7,
-    };
-  });
+  const postUrls: MetadataRoute.Sitemap = postFilenames.map((name) => ({
+    url: `${siteUrl}/posts/${name.replace(/\.mdx$/, '')}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily',
+    priority: 0.7,
+  }));
 
   return [
     {
