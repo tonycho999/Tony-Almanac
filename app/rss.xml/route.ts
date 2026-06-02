@@ -1,24 +1,25 @@
-import { glob } from 'glob';
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 import matter from 'gray-matter';
 
 export const dynamic = 'force-static';
 
 export async function GET() {
   const siteUrl = 'https://tony-almanac.pages.dev';
+  const postsDirectory = path.join(process.cwd(), '_posts');
 
-  const files = await glob('_posts/**/*.mdx', {
-    cwd: process.cwd(),
-  });
+  let postFilenames: string[] = [];
+  try {
+    postFilenames = fs.readdirSync(postsDirectory).filter((f) => f.endsWith('.mdx'));
+  } catch (error) {
+    console.error('RSS: _posts 읽기 실패:', error);
+  }
 
-  // date 기준 최신순 정렬
-  const posts = files
-    .map((file) => {
-      const filePath = path.join(process.cwd(), file);
-      const fileContents = fs.readFileSync(filePath, 'utf8');
-      const { data, content } = matter(fileContents);
-      const slug = path.basename(file, '.mdx');
+  const posts = postFilenames
+    .map((name) => {
+      const filePath = path.join(postsDirectory, name);
+      const { data, content } = matter(fs.readFileSync(filePath, 'utf8'));
+      const slug = name.replace(/\.mdx$/, '');
       return { slug, data, content };
     })
     .sort((a, b) => {
@@ -27,13 +28,15 @@ export async function GET() {
       return dateB - dateA;
     });
 
+  const escape = (str: string) =>
+    str.replace(/[<>&'"]/g, (c) =>
+      ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c] ?? c)
+    );
+
   const postItems = posts
     .map(({ slug, data, content }) => {
-      const description = (
-        data.description ||
-        content.substring(0, 150)
-      ).replace(/[<>&'"]/g, (c) =>
-        ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', "'": '&apos;', '"': '&quot;' }[c] ?? c)
+      const description = escape(
+        data.description || content.substring(0, 150)
       );
       return `
     <item>
