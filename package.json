@@ -5,7 +5,7 @@
   "description": "Tony's Almanac - A whisky journal: A hobby that became my daily ritual. It is also a collection of stories about Tony's minor experiences.",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/generate-sitemap.mjs && next build",
     "start": "next start",
     "lint": "next lint"
   },
