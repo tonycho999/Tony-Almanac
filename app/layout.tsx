@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
 
   // [SEO] 검색 엔진이 신뢰할 수 있는 키워드 최적화
-  keywords: ['Programming', 'Software Development', 'Single Malt Whisky', 'Golf', 'Samsung Lions', 'Travel Diary', '삼성라이온즈', '위스키', '세계여행', '싱글몰트', 'whiskey', 'whisky', '해외여행'],
+  keywords: ['Programming', 'Software Development', 'Single Malt Whisky', 'Golf', 'Travel Diary', '위스키', '세계여행', '싱글몰트', 'whiskey', 'whisky', '해외여행'],
   
   authors: [{ name: 'Tony Cho' }],
   creator: 'Tony Cho',
@@ -112,10 +112,6 @@ export default function RootLayout({
               
               <Link href="/category/golf" className="group flex items-center px-2 py-2.5 text-sm font-medium text-gray-700 hover:text-green-700 hover:bg-green-50 rounded-lg transition-all">
                 <span className="mr-3 group-hover:scale-110 transition-transform">⛳</span> Golf Diary
-              </Link>
-              
-              <Link href="/category/lions" className="group flex items-center px-2 py-2.5 text-sm font-medium text-gray-700 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-all">
-                <span className="mr-3 group-hover:scale-110 transition-transform">🦁</span> Lion's Roar
               </Link>
               
               <Link href="/category/travel" className="group flex items-center px-2 py-2.5 text-sm font-medium text-gray-700 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-all">
